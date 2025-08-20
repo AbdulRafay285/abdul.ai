@@ -2,7 +2,7 @@ import streamlit as st
 import google.generativeai as genai
 
 # --- Streamlit Page Config ---
-st.set_page_config(page_title="AI Chatbot", page_icon="🤖", layout="centered")
+st.set_page_config(page_title="ABDUL.ai", page_icon="🤖", layout="centered")
 
 # --- Custom CSS for WhatsApp style bubbles ---
 st.markdown("""
@@ -48,7 +48,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("🤖 AI Chatbot")
+st.title("🤖 ABDUL.ai")
 
 # --- Configure Gemini API ---
 genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
@@ -85,3 +85,4 @@ if send and user_input:
 
     st.session_state["messages"].append({"role": "assistant", "content": reply})
     st.rerun()
+
