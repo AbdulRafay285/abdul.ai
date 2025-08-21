@@ -74,8 +74,8 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # --- Centered Title + Subtitle ---
-st.markdown("<h1 style='text-align: center;'>🤖 ABDUL.ai</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; font-size:18px; color:gray;'>simple message chatbot</p>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; color:{title_color};'>🤖 ABDUL.ai</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-size:18px; color:{subtitle_color};'>simple message chatbot</p>", unsafe_allow_html=True)
 
 # --- Configure Gemini API ---
 genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
@@ -128,6 +128,7 @@ with col2:
     send = st.button("➤", key="send_btn", on_click=send_message)
 
 st.markdown('</div>', unsafe_allow_html=True)
+
 
 
 
