@@ -4,12 +4,34 @@ import google.generativeai as genai
 # --- Streamlit Page Config ---
 st.set_page_config(page_title="ABDUL.ai", page_icon="🤖", layout="centered")
 
-# --- Custom CSS for Background + Chat Style ---
-st.markdown("""
+# --- Sidebar Theme Selector ---
+theme = st.sidebar.radio("🌈 Choose Theme", ["Light", "Dark", "Custom"])
+
+# --- Colors for Each Theme ---
+if theme == "Light":
+    bg_color = "#FFFFFF"
+    user_color = "#DCF8C6"   # WhatsApp green
+    bot_color = "#FFFFFF"    # White bubble
+    bot_border = "#DDD"
+elif theme == "Dark":
+    bg_color = "#1E1E1E"
+    user_color = "#056162"   # Dark teal
+    bot_color = "#2A2A2A"    # Dark gray bubble
+    bot_border = "#444"
+else:  # Custom
+    bg_color = "#87F1DC"
+    user_color = "#B6F7C1"   # Light green
+    bot_color = "#FFFFFF"    # White bubble
+    bot_border = "#DDD"
+
+# --- Custom CSS with Dynamic Background & Chat Colors ---
+st.markdown(f"""
     <style>
-    .stApp {background-color: #FABCFF;} /* Background applied */
-    .chat-container {max-width: 600px; margin: auto; padding-bottom: 100px;}
-    .message {
+    .stApp {{
+        background-color: {bg_color};
+    }}
+    .chat-container {{max-width: 600px; margin: auto; padding-bottom: 100px;}}
+    .message {{
         padding: 10px 15px;
         border-radius: 20px;
         margin: 10px;
@@ -17,35 +39,37 @@ st.markdown("""
         max-width: 80%;
         word-wrap: break-word;
         font-size: 15px;
-    }
-    .user {
-        background-color: #dcf8c6;
+    }}
+    .user {{
+        background-color: {user_color};
         margin-left: auto;
         display: block;
         text-align: right;
-    }
-    .bot {
-        background-color: #ffffff;
-        border: 1px solid #ddd;
+        color: black;
+    }}
+    .bot {{
+        background-color: {bot_color};
+        border: 1px solid {bot_border};
         margin-right: auto;
         display: block;
         text-align: left;
-    }
-    .sticky-bar {
+        color: black;
+    }}
+    .sticky-bar {{
         position: fixed; bottom: 0; left: 0; right: 0;
         background: white; padding: 10px;
         border-top: 1px solid #ddd;
         display: flex; gap: 10px; z-index: 1000;
         align-items: center;
-    }
-    .sticky-bar input {
+    }}
+    .sticky-bar input {{
         flex: 1; border-radius: 20px; border: 1px solid #ccc; padding: 10px 15px;
-    }
-    .send-btn {
+    }}
+    .send-btn {{
         background-color: #25d366; color: white;
         border: none; border-radius: 50%;
         width: 40px; height: 40px; cursor: pointer; font-size: 18px;
-    }
+    }}
     </style>
 """, unsafe_allow_html=True)
 
@@ -61,13 +85,30 @@ model = genai.GenerativeModel("gemini-1.5-flash")
 if "messages" not in st.session_state:
     st.session_state["messages"] = []
 
+# --- Function to send message ---
+def send_message():
+    user_msg = st.session_state.user_input
+    if user_msg.strip() == "":
+        return
+    st.session_state["messages"].append({"role": "user", "content": user_msg})
+
+    try:
+        response = model.generate_content(user_msg)
+        reply = response.text
+    except Exception as e:
+        reply = f"⚠️ Error: {e}"
+
+    st.session_state["messages"].append({"role": "assistant", "content": reply})
+
+    # ✅ Clear input safely
+    del st.session_state["user_input"]
+
 # --- Display Chat History ---
 st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
 for msg in st.session_state["messages"]:
     role = "user" if msg["role"] == "user" else "bot"
-    # ✅ Render with markdown so emojis work
     st.markdown(
-        f"<div class='message {role}'>{st.markdown(msg['content'])}</div>",
+        f"<div class='message {role}'>{msg['content']}</div>",
         unsafe_allow_html=True
     )
 st.markdown("</div>", unsafe_allow_html=True)
@@ -79,38 +120,16 @@ col1, col2 = st.columns([10,1])
 with col1:
     user_input = st.text_input(
         "Type a message...",
-        key="temp_input",
+        key="user_input",
         label_visibility="collapsed",
-        on_change=lambda: st.session_state.update(send_trigger=True)  # Enter key send
+        on_change=send_message  # ✅ Enter sends
     )
 with col2:
-    send = st.button("➤", key="send_btn")
+    send = st.button("➤", key="send_btn", on_click=send_message)
 
 st.markdown('</div>', unsafe_allow_html=True)
 
-# --- Handle Enter Press ---
-if "send_trigger" in st.session_state and st.session_state.send_trigger:
-    send = True
-    st.session_state.send_trigger = False
 
-# --- Send Message ---
-if send and user_input:
-    # Add user message
-    st.session_state["messages"].append({"role": "user", "content": user_input})
-
-    # Get bot response
-    try:
-        response = model.generate_content(user_input)
-        reply = response.text
-    except Exception as e:
-        reply = f"⚠️ Error: {e}"
-
-    st.session_state["messages"].append({"role": "assistant", "content": reply})
-
-    # ✅ Auto-clear input
-    st.session_state["temp_input"] = ""
-
-    st.rerun()
 
 
 
