@@ -7,7 +7,7 @@ st.set_page_config(page_title="ABDUL.ai", page_icon="🤖", layout="centered")
 # --- Custom CSS for WhatsApp style bubbles ---
 st.markdown("""
     <style>
-    body {background-color: #f0f2f6;}
+    body {background-color: #fbe8b0;} /* Updated Background Color */
     .chat-container {max-width: 600px; margin: auto; padding-bottom: 100px;}
     .message {
         padding: 10px 15px;
@@ -36,6 +36,7 @@ st.markdown("""
         background: white; padding: 10px;
         border-top: 1px solid #ddd;
         display: flex; gap: 10px; z-index: 1000;
+        align-items: center;
     }
     .sticky-bar input {
         flex: 1; border-radius: 20px; border: 1px solid #ccc; padding: 10px 15px;
@@ -48,7 +49,9 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("🤖 ABDUL.ai")
+# --- Centered Title + Subtitle ---
+st.markdown("<h1 style='text-align: center;'>🤖 ABDUL.ai</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-size:18px; color:gray;'>simple message chatbot</p>", unsafe_allow_html=True)
 
 # --- Configure Gemini API ---
 genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
@@ -65,10 +68,13 @@ for msg in st.session_state["messages"]:
     st.markdown(f"<div class='message {role}'>{msg['content']}</div>", unsafe_allow_html=True)
 st.markdown("</div>", unsafe_allow_html=True)
 
-# --- Sticky Input Bar ---
+# --- Sticky Input Bar with Send Button Inside ---
 st.markdown('<div class="sticky-bar">', unsafe_allow_html=True)
-user_input = st.text_input("Type a message...", key="chat_input", label_visibility="collapsed")
-send = st.button("➤", key="send_btn")
+col1, col2 = st.columns([10,1])
+with col1:
+    user_input = st.text_input("Type a message...", key="chat_input", label_visibility="collapsed")
+with col2:
+    send = st.button("➤", key="send_btn")
 st.markdown('</div>', unsafe_allow_html=True)
 
 # --- Send Message ---
@@ -85,4 +91,5 @@ if send and user_input:
 
     st.session_state["messages"].append({"role": "assistant", "content": reply})
     st.rerun()
+
 
