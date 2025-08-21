@@ -15,8 +15,8 @@ if theme == "Light":
     bot_border = "#DDD"
 elif theme == "Dark":
     bg_color = "#1E1E1E"
-    user_color = "#056162"   # Dark teal
-    bot_color = "#2A2A2A"    # Dark gray bubble
+    user_color = "#DCF8C6"   # WhatsApp green
+    bot_color = "#FFFFFF"    # White bubble
     bot_border = "#444"
 else:  # Custom
     bg_color = "#87F1DC"
@@ -128,6 +128,7 @@ with col2:
     send = st.button("➤", key="send_btn", on_click=send_message)
 
 st.markdown('</div>', unsafe_allow_html=True)
+
 
 
 
