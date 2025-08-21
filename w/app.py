@@ -4,10 +4,10 @@ import google.generativeai as genai
 # --- Streamlit Page Config ---
 st.set_page_config(page_title="ABDUL.ai", page_icon="🤖", layout="centered")
 
-# --- Custom CSS for WhatsApp style bubbles ---
+# --- Custom CSS for Background + Chat Style ---
 st.markdown("""
     <style>
-    body {background-color: #FABCFF;} /* Updated Background Color */
+    .stApp {background-color: #FABCFF;} /* Background applied */
     .chat-container {max-width: 600px; margin: auto; padding-bottom: 100px;}
     .message {
         padding: 10px 15px;
@@ -60,31 +60,35 @@ model = genai.GenerativeModel("gemini-1.5-flash")
 # --- Session State for Messages ---
 if "messages" not in st.session_state:
     st.session_state["messages"] = []
-if "chat_input" not in st.session_state:
-    st.session_state["chat_input"] = ""  # for auto-clear
 
 # --- Display Chat History ---
 st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
 for msg in st.session_state["messages"]:
     role = "user" if msg["role"] == "user" else "bot"
-    st.markdown(f"<div class='message {role}'>{msg['content']}</div>", unsafe_allow_html=True)
+    # ✅ Render with markdown so emojis work
+    st.markdown(
+        f"<div class='message {role}'>{st.markdown(msg['content'])}</div>",
+        unsafe_allow_html=True
+    )
 st.markdown("</div>", unsafe_allow_html=True)
 
-# --- Sticky Input Bar with Send Button Inside ---
+# --- Sticky Input Bar ---
 st.markdown('<div class="sticky-bar">', unsafe_allow_html=True)
 col1, col2 = st.columns([10,1])
+
 with col1:
     user_input = st.text_input(
         "Type a message...",
-        key="chat_input",
+        key="temp_input",
         label_visibility="collapsed",
-        on_change=lambda: st.session_state.update(send_trigger=True)  # ✅ Enter press = send
+        on_change=lambda: st.session_state.update(send_trigger=True)  # Enter key send
     )
 with col2:
     send = st.button("➤", key="send_btn")
+
 st.markdown('</div>', unsafe_allow_html=True)
 
-# --- Handle Send Trigger ---
+# --- Handle Enter Press ---
 if "send_trigger" in st.session_state and st.session_state.send_trigger:
     send = True
     st.session_state.send_trigger = False
@@ -103,10 +107,12 @@ if send and user_input:
 
     st.session_state["messages"].append({"role": "assistant", "content": reply})
 
-    # ✅ Auto-clear input box after sending
-    st.session_state["chat_input"] = ""
+    # ✅ Auto-clear input
+    st.session_state["temp_input"] = ""
 
     st.rerun()
+
+
 
 
 
