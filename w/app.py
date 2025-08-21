@@ -2,12 +2,12 @@ import streamlit as st
 import google.generativeai as genai
 
 # --- Streamlit Page Config ---
-st.set_page_config(page_title="ABDUL.ai", page_icon="🤖", layout="centered")
+st.set_page_config(page_title="ABDUL.ai", page_icon="", layout="centered")
 
 # --- Custom CSS for WhatsApp style bubbles ---
 st.markdown("""
     <style>
-    body {background-color: #fbe8b0;} /* Updated Background Color */
+    body {background-color: #F29EF7;} /* Updated Background Color */
     .chat-container {max-width: 600px; margin: auto; padding-bottom: 100px;}
     .message {
         padding: 10px 15px;
@@ -91,5 +91,6 @@ if send and user_input:
 
     st.session_state["messages"].append({"role": "assistant", "content": reply})
     st.rerun()
+
 
 
