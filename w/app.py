@@ -73,6 +73,23 @@ st.markdown(f"""
     </style>
 """, unsafe_allow_html=True)
 
+# --- Title & Subtitle Colors based on Theme ---
+if theme == "Dark":
+    title_color = "white"        # ✅ Dark mode me white
+    subtitle_color = "lightgray" # ✅ Dark mode me halka gray
+    user_text_color = "white"
+    bot_text_color = "white"
+elif theme == "Light":
+    title_color = "black"
+    subtitle_color = "gray"
+    user_text_color = "black"
+    bot_text_color = "black"
+else:  # Custom
+    title_color = "black"
+    subtitle_color = "gray"
+    user_text_color = "black"
+    bot_text_color = "black"
+
 # --- Centered Title + Subtitle ---
 st.markdown("<h1 style='text-align: center; color:{title_color};'>🤖 ABDUL.ai</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; font-size:18px; color:{subtitle_color};'>simple message chatbot</p>", unsafe_allow_html=True)
@@ -128,6 +145,7 @@ with col2:
     send = st.button("➤", key="send_btn", on_click=send_message)
 
 st.markdown('</div>', unsafe_allow_html=True)
+
 
 
 
