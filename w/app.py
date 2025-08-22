@@ -2,7 +2,7 @@ import streamlit as st
 import google.generativeai as genai
 
 # --- Page Config ---
-st.set_page_config(page_title="ABDUL.ai", page_icon="🤖", layout="centered")
+st.set_page_config(page_title="ABDUL.ai", page_icon="", layout="centered")
 
 # --- Theme Selector ---
 theme = st.sidebar.radio("🌈 Choose Theme", ["Light", "Dark", "Custom"])
@@ -128,6 +128,7 @@ with col2:
         send_message()
 
 st.markdown('</div>', unsafe_allow_html=True)
+
 
 
 
