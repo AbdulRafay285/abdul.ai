@@ -59,7 +59,7 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # --- Title ---
-st.markdown(f"<h1 style='text-align: center; color:{title_color};'>🤖 ABDUL.ai</h1>", unsafe_allow_html=True)
+st.markdown(f"<h1 style='text-align: center; color:{title_color};'>ABDUL.ai</h1>", unsafe_allow_html=True)
 st.markdown(f"<p style='text-align: center; font-size:18px; color:{subtitle_color};'>simple message chatbot</p>", unsafe_allow_html=True)
 
 # --- Gemini API ---
@@ -127,6 +127,7 @@ with col2:
         send_message()
 
 st.markdown('</div>', unsafe_allow_html=True)
+
 
 
 
