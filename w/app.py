@@ -1,8 +1,6 @@
 import streamlit as st
 import google.generativeai as genai
 
-
-
 # --- Theme Selector ---
 theme = st.sidebar.radio("🌈 Choose Theme", ["Light", "Dark", "Custom"])
 
@@ -71,6 +69,8 @@ if "messages" not in st.session_state:
     st.session_state["messages"] = []
 if "chat_input" not in st.session_state:
     st.session_state["chat_input"] = ""
+if "input_reset" not in st.session_state:
+    st.session_state["input_reset"] = False
 
 # --- Show Chat History ---
 st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
@@ -107,20 +107,25 @@ def send_message():
 
     st.session_state["messages"].append({"role": "assistant", "content": reply})
 
-    # ✅ Auto-clear input
-    st.session_state.chat_input = ""
+    # ✅ Safe flag to clear input later
+    st.session_state.input_reset = True
 
 # --- Sticky Input Bar ---
 st.markdown('<div class="sticky-bar">', unsafe_allow_html=True)
 col1, col2 = st.columns([10,1])
 
 with col1:
-    st.text_input(
+    user_input = st.text_input(
         "Type a message...",
         key="chat_input",
         label_visibility="collapsed",
         on_change=send_message,  # ✅ Enter dabane par bhej do
     )
+
+    # ✅ Reset input safely after widget render
+    if st.session_state.input_reset:
+        st.session_state.chat_input = ""
+        st.session_state.input_reset = False
 
 with col2:
     if st.button("➤"):
