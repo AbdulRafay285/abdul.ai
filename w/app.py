@@ -64,7 +64,7 @@ st.markdown(f"<p style='text-align: center; font-size:18px; color:{subtitle_colo
 
 # --- Gemini API ---
 genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
-model = genai.GenerativeModel("gemini-1.5-flash")
+model = genai.GenerativeModel("gemini-2.0-flash")
 
 # --- Session State ---
 if "messages" not in st.session_state:
@@ -127,6 +127,7 @@ with col2:
         send_message()
 
 st.markdown('</div>', unsafe_allow_html=True)
+
 
 
 
