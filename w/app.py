@@ -63,6 +63,8 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 if "chat_input" not in st.session_state:
     st.session_state.chat_input = ""
+if "input_reset" not in st.session_state:
+    st.session_state.input_reset = False
 
 # --- Show Chat History ---
 st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
@@ -77,8 +79,10 @@ def send_message():
     if user_msg == "":
         return
 
+    # Add user message
     st.session_state.messages.append({"role": "user", "content": user_msg})
 
+    # Get bot response
     try:
         response = model.generate_content(user_msg)
         reply = response.text
@@ -87,9 +91,9 @@ def send_message():
 
     st.session_state.messages.append({"role": "assistant", "content": reply})
 
-    # ✅ Clear safely & rerun
-    st.session_state.chat_input = ""
-    st.rerun()
+    # --- DO NOT call rerun here (no-op) ---
+    # Instead set a flag; main script will clear the input and rerun.
+    st.session_state.input_reset = True
 
 # --- Sticky Input Bar ---
 st.markdown('<div class="sticky-bar">', unsafe_allow_html=True)
@@ -100,7 +104,7 @@ with col1:
         "Type a message...",
         key="chat_input",
         label_visibility="collapsed",
-        on_change=send_message,
+        on_change=send_message,   # Enter will trigger callback
     )
 
 with col2:
@@ -109,8 +113,14 @@ with col2:
 
 st.markdown('</div>', unsafe_allow_html=True)
 
-
-
+# --- After widgets: check reset flag and perform rerun OUTSIDE callback ---
+if st.session_state.get("input_reset", False):
+    # clear input safely
+    st.session_state.chat_input = ""
+    # unset flag so we don't loop
+    st.session_state.input_reset = False
+    # now rerun from main script (not from inside the callback)
+    st.experimental_rerun()
 
 
 
