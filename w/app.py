@@ -11,17 +11,11 @@ elif theme == "Dark":
 else:  # Custom
     bg_color, user_color, bot_color, bot_border = "#87F1DC", "#B6F7C1", "#FFFFFF", "#DDD"
 
-# --- Colors for Titles & Messages ---
+# --- Colors ---
 if theme == "Dark":
-    title_color = "white"
-    subtitle_color = "lightgray"
-    user_text_color = "white"
-    bot_text_color = "white"
+    title_color, subtitle_color, user_text_color, bot_text_color = "white", "lightgray", "white", "white"
 else:
-    title_color = "black"
-    subtitle_color = "gray"
-    user_text_color = "black"
-    bot_text_color = "black"
+    title_color, subtitle_color, user_text_color, bot_text_color = "black", "gray", "black", "black"
 
 # --- CSS ---
 st.markdown(f"""
@@ -66,28 +60,16 @@ model = genai.GenerativeModel("gemini-2.0-flash")
 
 # --- Session State ---
 if "messages" not in st.session_state:
-    st.session_state["messages"] = []
+    st.session_state.messages = []
 if "chat_input" not in st.session_state:
-    st.session_state["chat_input"] = ""
-if "input_reset" not in st.session_state:
-    st.session_state["input_reset"] = False
+    st.session_state.chat_input = ""
 
 # --- Show Chat History ---
 st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
-for msg in st.session_state["messages"]:
+for msg in st.session_state.messages:
     role = "user" if msg["role"] == "user" else "bot"
     st.markdown(f"<div class='message {role}'>{msg['content']}</div>", unsafe_allow_html=True)
 st.markdown("</div>", unsafe_allow_html=True)
-
-# --- ✅ Auto Scroll to Bottom ---
-st.markdown("""
-    <script>
-    var chatContainer = window.parent.document.querySelector('.main');
-    if (chatContainer) {
-        chatContainer.scrollTo(0, chatContainer.scrollHeight);
-    }
-    </script>
-""", unsafe_allow_html=True)
 
 # --- Function to Send Message ---
 def send_message():
@@ -95,49 +77,37 @@ def send_message():
     if user_msg == "":
         return
 
-    # Add user message
-    st.session_state["messages"].append({"role": "user", "content": user_msg})
+    st.session_state.messages.append({"role": "user", "content": user_msg})
 
-    # Get bot response
     try:
         response = model.generate_content(user_msg)
         reply = response.text
     except Exception as e:
         reply = f"⚠️ Error: {e}"
 
-    st.session_state["messages"].append({"role": "assistant", "content": reply})
+    st.session_state.messages.append({"role": "assistant", "content": reply})
 
-    # ✅ Safe flag to clear input later
-    st.session_state.input_reset = True
+    # ✅ Clear safely & rerun
+    st.session_state.chat_input = ""
+    st.rerun()
 
 # --- Sticky Input Bar ---
 st.markdown('<div class="sticky-bar">', unsafe_allow_html=True)
-col1, col2 = st.columns([10,1])
+col1, col2 = st.columns([10, 1])
 
 with col1:
-    user_input = st.text_input(
+    st.text_input(
         "Type a message...",
         key="chat_input",
         label_visibility="collapsed",
-        on_change=send_message,  # ✅ Enter dabane par bhej do
+        on_change=send_message,
     )
-
-    # ✅ Reset input safely after widget render
-    if st.session_state.input_reset:
-        st.session_state.chat_input = ""
-        st.session_state.input_reset = False
 
 with col2:
     if st.button("➤"):
         send_message()
 
 st.markdown('</div>', unsafe_allow_html=True)
-
-
-
-
-
-
 
 
 
